@@ -224,7 +224,7 @@ class favItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text(style: TextStyle(fontSize: 20), item));
+    return ListTile(leading: Icon(Icons.star), title: Text(item));
   }
 }
 
@@ -233,6 +233,6 @@ class HeadingFav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text(style: TextStyle(fontSize: 100), "Fav Items "));
+    return Center(child: Text(style: TextStyle(fontSize: 50), "Fav Items "));
   }
 }
