@@ -70,6 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         page = FavouritePage();
         break;
+      case 2:
+        page = RegPage();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -91,6 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     NavigationRailDestination(
                       icon: Icon(Icons.favorite),
                       label: Text('Favorites'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.app_registration_sharp),
+                      label: Text('Reg Here'),
                     ),
                   ],
 
@@ -236,3 +243,85 @@ class HeadingFav extends StatelessWidget {
     return Center(child: Text(style: TextStyle(fontSize: 50), "Fav Items "));
   }
 }
+
+// class RegPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     var appState = context.watch<MyAppState>();
+//     final _formKey = GlobalKey<FormState>();
+
+//     return Form(
+//       key: _formKey,
+//       child: const Column(
+//         children: <Widget>[
+//           // Add TextFormFields and ElevatedButton here.
+
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+class RegPage extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Registration Form')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    // Form is valid, process the data
+                    String name = _nameController.text;
+                    String email = _emailController.text;
+                    // TODO: Implement your data processing logic here
+                    print('Name: $name, Email: $email');
+                    // You can add a snackbar to show the result
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Registration successful!')),
+                    );
+                  }
+                },
+                child: const Text('Register'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Define a custom Form widget.
