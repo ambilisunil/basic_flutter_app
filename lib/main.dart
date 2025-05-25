@@ -19,7 +19,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Namer App',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 33, 93, 172),
+          ),
         ),
         home: MyHomePage(),
       ),
@@ -33,7 +35,7 @@ class MyAppState extends ChangeNotifier {
 
   void getNext() {
     var h = WordPair.random();
-    current = current + " " + h.toString();
+    current = h.toString();
     notifyListeners();
   }
 
@@ -66,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GeneratorPage();
         break;
       case 1:
-        page = Placeholder();
+        page = FavouritePage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -194,5 +196,43 @@ class BigCard extends StatelessWidget {
         child: Text("A Random Idea"),
       ),
     );
+  }
+}
+
+class FavouritePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var fav = appState.favorites;
+
+    return Center(
+      child: Column(
+        children: [
+          HeadingFav(),
+          for (var item in fav) // "item" is a variable for each element
+            favItems(item: item), // Display the item in a Text widget
+        ],
+      ),
+    );
+  }
+}
+
+class favItems extends StatelessWidget {
+  const favItems({super.key, required this.item});
+
+  final String item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(style: TextStyle(fontSize: 20), item));
+  }
+}
+
+class HeadingFav extends StatelessWidget {
+  const HeadingFav({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(style: TextStyle(fontSize: 100), "Fav Items "));
   }
 }
