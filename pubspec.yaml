@@ -104,6 +104,7 @@ dependencies:
   provider: ^6.1.5
   http: ^1.4.0
   json: ^0.20.4
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
