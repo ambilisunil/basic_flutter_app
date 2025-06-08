@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../app_state.dart';
 import './generatorPage.dart';
 import 'favPage.dart';
 import 'regPage.dart';
