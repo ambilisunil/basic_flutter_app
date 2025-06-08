@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../app_state.dart';
+import 'package:provider/provider.dart';
 
 class RegPage extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -7,6 +9,8 @@ class RegPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     return Scaffold(
       appBar: AppBar(title: const Text('Registration Form')),
       body: Padding(
@@ -36,6 +40,8 @@ class RegPage extends StatelessWidget {
                     String name = _nameController.text;
                     String email = _emailController.text;
                     print('Name: $name, Email: $email');
+                    appState.localStorageSet("name", name);
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Registration successful!')),
                     );

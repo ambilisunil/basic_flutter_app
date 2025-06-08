@@ -1,17 +1,19 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:google_fonts/google_fonts.dart';
+import '../app_state.dart';
+import 'package:provider/provider.dart';
 
 class GenderMysticApp extends StatelessWidget {
   const GenderMysticApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     return MaterialApp(
       title: 'Mystic Gender Oracle',
       debugShowCheckedModeBanner: false,
@@ -137,12 +139,33 @@ class ShowGenderResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     if (data.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(20),
-        child: const Text(
-          "🪄 Enter a name to unveil its mystery...",
-          style: TextStyle(color: Colors.white70),
+
+        child: Column(
+          children: [
+            // Text("Hi  ${appState.localStorageRead("name")}"),
+            FutureBuilder(
+              future: appState.localStorageRead("name"),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // Or any loading indicator
+                } else if (snapshot.hasError) {
+                  return const Text("Error loading name");
+                } else {
+                  return Text("Hi ${snapshot.data}");
+                }
+              },
+            ),
+
+            const Text(
+              "🪄 Enter a name to unveil its mystery...",
+              style: TextStyle(color: Colors.white70),
+            ),
+          ],
         ),
       );
     }
