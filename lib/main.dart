@@ -4,6 +4,8 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -66,13 +68,15 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (selectedIndex) {
       case 0:
         page = GeneratorPage();
-        break;
       case 1:
         page = FavouritePage();
-        break;
       case 2:
         page = RegPage();
-        break;
+      case 3:
+        page = TesyApp();
+
+      case 4:
+        page = Gender();
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -98,6 +102,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     NavigationRailDestination(
                       icon: Icon(Icons.app_registration_sharp),
                       label: Text('Reg Here'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.textsms_sharp),
+                      label: Text('Test Here'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.find_replace_rounded),
+                      label: Text('Gender Finder With Name'),
                     ),
                   ],
 
@@ -319,6 +331,189 @@ class RegPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TesyApp extends StatelessWidget {
+  const TesyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // Root widget
+      home: Scaffold(
+        appBar: AppBar(title: const Text('My Home Page')),
+        body: Center(
+          child: Builder(
+            builder: (context) {
+              return Column(
+                children: [
+                  const Text('Hello, World!'),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      print('Click!');
+                    },
+                    child: const Text('A button'),
+                  ),
+                  PaddedText(),
+                  CounterWidget(),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PaddedText extends StatelessWidget {
+  const PaddedText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: const Text('Hello, World!'),
+    );
+  }
+}
+
+class CounterWidget extends StatefulWidget {
+  @override
+  State<CounterWidget> createState() => _CounterWidgetState();
+}
+
+class _CounterWidgetState extends State<CounterWidget> {
+  @override
+  // Widget build(BuildContext context) {
+  //   return BorderedImage();
+  // }
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        Text("data"),
+        Text("data"),
+        Text("data"),
+
+        BorderedImage(),
+        // BorderedImage(),
+        // BorderedImage(),
+        // BorderedImage(),
+        // BorderedImage(),
+        // BorderedImage(),
+        // BorderedImage(),
+      ],
+    );
+    //;
+  }
+}
+
+class BorderedImage extends StatelessWidget {
+  const BorderedImage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.network('https://picsum.photos/250?image=9');
+  }
+}
+
+class Gender extends StatefulWidget {
+  const Gender({super.key});
+
+  @override
+  State<Gender> createState() => _GenderState();
+}
+
+class _GenderState extends State<Gender> {
+  Map<String, dynamic> data = {};
+  final _inputName = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // main("ambili");
+  }
+
+  void main(String name) async {
+    final response = await http.get(
+      Uri.parse('https://api.genderize.io?name=$name'),
+    );
+    setState(() {
+      data = jsonDecode(response.body);
+    });
+    print(data);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Gender Checker")),
+      body: Column(
+        children: [
+          TextFormField(
+            controller: _inputName,
+            decoration: const InputDecoration(labelText: 'Name'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your name';
+              }
+              return null;
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: ElevatedButton(
+              onPressed: () {
+                main(_inputName.text);
+              },
+              child: Text('Find Gender'),
+            ),
+          ),
+          ShowGenderResults(data: data),
+        ],
+      ),
+    );
+  }
+}
+
+class ShowGenderResults extends StatelessWidget {
+  const ShowGenderResults({super.key, required this.data});
+
+  final Map<String, dynamic> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color.fromARGB(255, 243, 254, 248),
+      child: Center(
+        child: data.isEmpty
+            // ? const CircularProgressIndicator()
+            ? const Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [],
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(18),
+                      child: Text("Gender: ${data['gender']}"),
+                    ),
+                    Text(
+                      " ${((data['probability']) * 100)}% Probability to Become ${data['gender']} for name ${data['name']}",
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
